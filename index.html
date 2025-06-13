@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanith - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Light Mode */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: rgba(255, 255, 255, 0.8);
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border: rgba(226, 232, 240, 0.6);
+            --accent: #6366f1;
+            --accent-hover: #5b5bf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode */
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a2e;
+            --bg-card: rgba(26, 26, 46, 0.8);
+            --text-primary: #ffffff;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: rgba(51, 65, 85, 0.6);
+            --accent: #8b5cf6;
+            --accent-hover: #7c3aed;
+            --success: #22c55e;
+            --warning: #eab308;
+            --error: #f87171;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --glass-bg: rgba(15, 15, 35, 0.4);
+            --glass-border: rgba(139, 92, 246, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--success) 100%);
+            opacity: 0.05;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding: 1.5rem 2rem;
+            background: var(--glass-bg);
+            -webkit-backdrop-filter: blur(10px);
+             backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px var(--shadow);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--success));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--border);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            padding: 0;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        }
+
+        [data-theme="dark"] .theme-toggle::before {
+            transform: translateX(30px);
+            background: var(--accent);
+        }
+
+        .user-menu {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--success));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-menu:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Status Overview */
+        .status-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .status-card {
+            background: var(--glass-bg);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+        }
+
+        .status-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 64px var(--shadow);
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .status-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-icon {
+            width: 24px;
+            height: 24px;
+            padding: 4px;
+            border-radius: 8px;
+            background: var(--glass-bg);
+        }
+
+        .status-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .status-change {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .status-change.positive {
+            color: var(--success);
+        }
+
+        .status-change.negative {
+            color: var(--error);
+        }
+
+        .status-change.neutral {
+            color: var(--text-muted);
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: var(--glass-bg);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px var(--shadow);
+        }
+
+        .tabs-header {
+            display: flex;
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: var(--glass-bg);
+        }
+
+        .tab.active {
+            color: var(--accent);
+            background: var(--glass-bg);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+        }
+
+        .tab-content {
+            padding: 2rem;
+            min-height: 400px;
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table th {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table tr:hover {
+            background: var(--glass-bg);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-online {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+        }
+
+        .status-offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .status-pending {
+            background: rgba(234, 179, 8, 0.2);
+            color: var(--warning);
+        }
+
+        /* Charts placeholder */
+        .chart-container {
+            height: 300px;
+            background: var(--glass-bg);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            margin: 1rem 0;
+        }
+
+        .chart-placeholder {
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .tabs-header {
+                flex-direction: column;
+            }
+
+            .tab {
+                border-bottom: 1px solid var(--border);
+            }
+
+            .tab:last-child {
+                border-bottom: none;
+            }
+
+            .status-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .data-table {
+                font-size: 0.9rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        /* Icons (using Unicode) */
+        .icon-users::before { content: '👥'; }
+        .icon-shield::before { content: '🛡️'; }
+        .icon-activity::before { content: '📊'; }
+        .icon-server::before { content: '🖥️'; }
+        .icon-ban::before { content: '🚫'; }
+        .icon-file::before { content: '📄'; }
+        .icon-arrow-up::before { content: '↗️'; }
+        .icon-arrow-down::before { content: '↘️'; }
+        .icon-minus::before { content: '➖'; }
+
+        /* Animations */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="container">
+        <!-- Header -->
+        <header class="header slide-in">
+            <div class="logo">
+                <div class="logo-icon">V</div>
+                <h1>Vanith</h1>
+            </div>
+            <div class="header-controls">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"></button>
+                <div class="user-menu">A</div>
+            </div>
+        </header>
+
+        <!-- Status Overview -->
+        <section class="status-overview">
+            <div class="status-card slide-in">
+    <div class="status-header">
+        <span class="status-title">Active Users</span>
+        <span class="status-icon icon-users"></span>
+    </div>
+    <div class="status-value" id="active-users">2,847</div>
+    <div class="status-change positive">
+        <span class="icon-arrow-up"></span>
+        +12.5% vs last week
+    </div>
+</div>
+
+            <div class="status-card slide-in">
+    <div class="status-header">
+        <span class="status-title">Banned Users</span>
+        <span class="status-icon icon-ban"></span>
+    </div>
+    <div class="status-value" id="banned-users">23</div>
+    <div class="status-change negative">
+        <span class="icon-arrow-down"></span>
+        -3 today
+    </div>
+</div>
+
+            <div class="status-card slide-in">
+    <div class="status-header">
+        <span class="status-title">Logs Today</span>
+        <span class="status-icon icon-activity"></span>
+    </div>
+    <div class="status-value" id="logs-today">15,429</div>
+    <div class="status-change neutral">
+        <span class="icon-minus"></span>
+        Normal activity
+    </div>
+</div>
+        </section>
+
+        <!-- Tabs -->
+        <section class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab active" onclick="switchTab(event, 'users')">
+                    <span class="icon-users"></span>
+                    Users
+                </button>
+                <button class="tab" onclick="switchTab(event, 'banned')">
+                    <span class="icon-ban"></span>
+                    Banned
+                </button>
+                <button class="tab" onclick="switchTab(event, 'logs')">
+                    <span class="icon-file"></span>
+                    Logs
+                </button>
+                <button class="tab" onclick="switchTab(event, 'analytics')">
+                    <span class="icon-activity"></span>
+                    Analytics
+                </button>
+            </div>
+
+            <div class="tab-content">
+                <!-- Users Tab -->
+                <div id="users" class="tab-panel active">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Active Users</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Status</th>
+                                <th>Last Seen</th>
+                                <th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Alice Johnson</td>
+                                <td><span class="status-badge status-online">Online</span></td>
+                                <td>2 minutes ago</td>
+                                <td>Admin</td>
+                            </tr>
+                            <tr>
+                                <td>Bob Smith</td>
+                                <td><span class="status-badge status-online">Online</span></td>
+                                <td>5 minutes ago</td>
+                                <td>User</td>
+                            </tr>
+                            <tr>
+                                <td>Carol White</td>
+                                <td><span class="status-badge status-offline">Offline</span></td>
+                                <td>1 hour ago</td>
+                                <td>Moderator</td>
+                            </tr>
+                            <tr>
+                                <td>David Brown</td>
+                                <td><span class="status-badge status-online">Online</span></td>
+                                <td>Just now</td>
+                                <td>User</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Banned Tab -->
+                <div id="banned" class="tab-panel">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Banned Users</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Reason</th>
+                                <th>Banned Date</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>John Doe</td>
+                                <td>Spam</td>
+                                <td>2024-06-10</td>
+                                <td>7 days</td>
+                            </tr>
+                            <tr>
+                                <td>Jane Wilson</td>
+                                <td>Harassment</td>
+                                <td>2024-06-08</td>
+                                <td>Permanent</td>
+                            </tr>
+                            <tr>
+                                <td>Mike Davis</td>
+                                <td>Multiple violations</td>
+                                <td>2024-06-12</td>
+                                <td>30 days</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Logs Tab -->
+                <div id="logs" class="tab-panel">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">System Logs</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Level</th>
+                                <th>Event</th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-06-12 14:30:25</td>
+                                <td><span class="status-badge status-online">Info</span></td>
+                                <td>User login</td>
+                                <td>alice@example.com</td>
+                            </tr>
+                            <tr>
+                                <td>2024-06-12 14:28:15</td>
+                                <td><span class="status-badge status-pending">Warning</span></td>
+                                <td>Failed login attempt</td>
+                                <td>unknown</td>
+                            </tr>
+                            <tr>
+                                <td>2024-06-12 14:25:05</td>
+                                <td><span class="status-badge status-offline">Error</span></td>
+                                <td>Database connection failed</td>
+                                <td>system</td>
+                            </tr>
+                            <tr>
+                                <td>2024-06-12 14:20:30</td>
+                                <td><span class="status-badge status-online">Info</span></td>
+                                <td>User registered</td>
+                                <td>newuser@example.com</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div id="analytics" class="tab-panel">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Analytics Overview</h3>
+                    <div class="chart-container">
+                        <div class="chart-placeholder">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📈</div>
+                            <h4>Interactive Charts</h4>
+                            <p>Real-time analytics and performance metrics would be displayed here</p>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem;">
+                        <div style="text-align: center; padding: 1rem;">
+                            <div style="font-size: 2rem; font-weight: bold; color: var(--accent);">85%</div>
+                            <div style="color: var(--text-muted);">User Satisfaction</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem;">
+                            <div style="font-size: 2rem; font-weight: bold; color: var(--success);">42s</div>
+                            <div style="color: var(--text-muted);">Avg Response Time</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem;">
+                            <div style="font-size: 2rem; font-weight: bold; color: var(--warning);">1.2M</div>
+                            <div style="color: var(--text-muted);">Page Views</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', newTheme);
+            
+            // Save preference
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+        }
+
+        // Tab Switching
+        function switchTab(event, tabName) {
+            // Remove active class from all tabs and panels
+            const tabs = document.querySelectorAll('.tab');
+            const panels = document.querySelectorAll('.tab-panel');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            panels.forEach(panel => panel.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding panel
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Animate status cards on load
+        function animateCards() {
+            const cards = document.querySelectorAll('.status-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'all 0.5s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 100);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            animateCards();
+            
+            // Add pulse animation to online status badges
+            const onlineBadges = document.querySelectorAll('.status-online');
+            onlineBadges.forEach(badge => {
+                badge.classList.add('pulse');
+            });
+        });
+
+        // Simulated real-time updates
+        function updateStats() {
+            const activeUsers = document.querySelector('.status-value');
+            const currentValue = parseInt(activeUsers.textContent.replace(',', ''));
+            const newValue = currentValue + Math.floor(Math.random() * 10) - 5;
+            activeUsers.textContent = new Intl.NumberFormat().format(Math.max(0, newValue));
+        }
+
+        // Update stats every 30 seconds
+        setInterval(updateStats, 30000);
+        function updateStats() {
+    const updateElement = (id, minChange, maxChange) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        let value = parseInt(el.textContent.replace(/,/g, ''));
+        value += Math.floor(Math.random() * (maxChange - minChange + 1)) + minChange;
+        value = Math.max(0, value); // kein negativer Wert
+
+        el.textContent = new Intl.NumberFormat().format(value);
+    };
+
+    updateElement("active-users", -5, 10);
+    updateElement("banned-users", -1, 2);
+    updateElement("logs-today", 50, 200);
+}
+
+// Update alle 10 Sekunden
+setInterval(updateStats, 10000);
+
+    </script>
+</body>
+</html>
