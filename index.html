@@ -1,310 +1,121 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Vanith - Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vanith Dashboard</title>
+  <!-- UIverse: Beispiel Card & Button Styles -->
+  <link rel="stylesheet" href="https://unpkg.com/uiverse-css@latest">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body data-theme="light">
-    <div class="container">
-        <!-- Header -->
-        <header class="header slide-in">
-            <div class="logo">
-                <div class="logo-icon">V</div>
-                <h1>Vanith</h1>
-            </div>
-            <div class="header-controls">
-                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"></button>
-                <div class="user-menu">F</div>
-            </div>
-        </header>
+  <div class="uiverse-container container">
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">V</div><h1>Vanith</h1>
+      </div>
+      <div class="header-controls">
+        <button id="themeToggleBtn" class="uiverse-btn">🌞</button>
+        <div class="user-menu">F</div>
+      </div>
+    </header>
 
-        <!-- Status Overview -->
-        <section class="status-overview">
-            <div class="status-card slide-in">
-                <div class="status-header">
-                    <span class="status-title">Active Users</span>
-                    <span class="status-icon icon-users"></span>
-                </div>
-                <div class="status-value" id="active-users">2,847</div>
-                <div class="status-change positive">
-                    <span class="icon-arrow-up"></span>
-                    +12.5% vs last week
-                </div>
-            </div>
+    <!-- Status Cards -->
+    <section class="status-overview">
+      <div class="status-card uiverse-card">
+        <div class="status-header"><span>Aktive Nutzer</span></div>
+        <div class="status-value" id="activeUsers">–</div>
+      </div>
+      <div class="status-card uiverse-card">
+        <div class="status-header"><span>Gebannte Nutzer</span></div>
+        <div class="status-value" id="bannedUsers">–</div>
+      </div>
+      <div class="status-card uiverse-card">
+        <div class="status-header"><span>Logs (letzte Minute)</span></div>
+        <div class="status-value" id="logCount">–</div>
+      </div>
+    </section>
 
-            <div class="status-card slide-in">
-                <div class="status-header">
-                    <span class="status-title">Banned Users</span>
-                    <span class="status-icon icon-ban"></span>
-                </div>
-                <div class="status-value" id="banned-users">23</div>
-                <div class="status-change negative">
-                    <span class="icon-arrow-down"></span>
-                    -3 today
-                </div>
-            </div>
+    <!-- Tabs -->
+    <section class="tabs-container uiverse-card">
+      <div class="tabs-header">
+        <button class="tab active" onclick="switchTab('users')">Users</button>
+        <button class="tab" onclick="switchTab('banned')">Banned</button>
+        <button class="tab" onclick="switchTab('logs')">Logs</button>
+        <button class="tab" onclick="switchTab('analytics')">Analytics</button>
+      </div>
 
-            <div class="status-card slide-in">
-                <div class="status-header">
-                    <span class="status-title">Logs Today</span>
-                    <span class="status-icon icon-activity"></span>
-                </div>
-                <div class="status-value" id="logs-today">15,429</div>
-                <div class="status-change neutral">
-                    <span class="icon-minus"></span>
-                    Normal activity
-                </div>
-            </div>
-        </section>
+      <div class="tab-content">
+        <div id="users" class="tab-panel active">
+          <h3>Active Users</h3>
+          <ul id="userList"></ul>
+        </div>
+        <div id="banned" class="tab-panel">
+          <h3>Banned Users</h3>
+          <ul id="bannedList"></ul>
+        </div>
+        <div id="logs" class="tab-panel">
+          <h3>Recent Logs</h3>
+          <ul id="logsList"></ul>
+        </div>
+        <div id="analytics" class="tab-panel">
+          <h3>Ban-Rate Analyse</h3>
+          <canvas id="analyticsChart"></canvas>
+        </div>
+      </div>
+    </section>
+  </div>
 
-        <!-- Tabs -->
-        <section class="tabs-container">
-            <div class="tabs-header">
-                <button class="tab active" onclick="switchTab(event, 'users')">
-                    <span class="icon-users"></span>
-                    Users
-                </button>
-                <button class="tab" onclick="switchTab(event, 'banned')">
-                    <span class="icon-ban"></span>
-                    Banned
-                </button>
-                <button class="tab" onclick="switchTab(event, 'logs')">
-                    <span class="icon-file"></span>
-                    Logs
-                </button>
-                <button class="tab" onclick="switchTab(event, 'analytics')">
-                    <span class="icon-activity"></span>
-                    Analytics
-                </button>
-            </div>
+  <script>
+  // Theme Toggle
+  const themeBtn = document.getElementById('themeToggleBtn');
+  themeBtn.onclick = () => {
+    const body = document.body;
+    const newTheme = body.dataset.theme === 'light' ? 'dark' : 'light';
+    body.dataset.theme = newTheme;
+    localStorage.setItem('theme', newTheme);
+  };
+  document.body.dataset.theme = localStorage.getItem('theme') || 'light';
 
-            <div class="tab-content">
-                <!-- Users Tab -->
-                <div id="users" class="tab-panel active">
-                    <h3>Active Users</h3>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Status</th>
-                                <th>Last Seen</th>
-                                <th>Role</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Alice Johnson</td>
-                                <td><span class="status-badge status-online">Online</span></td>
-                                <td>2 minutes ago</td>
-                                <td>Admin</td>
-                            </tr>
-                            <tr>
-                                <td>Bob Smith</td>
-                                <td><span class="status-badge status-online">Online</span></td>
-                                <td>5 minutes ago</td>
-                                <td>User</td>
-                            </tr>
-                            <tr>
-                                <td>Carol White</td>
-                                <td><span class="status-badge status-offline">Offline</span></td>
-                                <td>1 hour ago</td>
-                                <td>Moderator</td>
-                            </tr>
-                            <tr>
-                                <td>David Brown</td>
-                                <td><span class="status-badge status-online">Online</span></td>
-                                <td>Just now</td>
-                                <td>User</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+  // Tab Wechsel
+  function switchTab(tabId){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.textContent.toLowerCase()===tabId));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active', p.id===tabId));
+  }
 
-                <!-- Banned Tab -->
-                <div id="banned" class="tab-panel">
-                    <h3>Banned Users</h3>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Reason</th>
-                                <th>Banned Date</th>
-                                <th>Duration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>John Doe</td>
-                                <td>Spam</td>
-                                <td>2024-06-10</td>
-                                <td>7 days</td>
-                            </tr>
-                            <tr>
-                                <td>Jane Wilson</td>
-                                <td>Harassment</td>
-                                <td>2024-06-08</td>
-                                <td>Permanent</td>
-                            </tr>
-                            <tr>
-                                <td>Mike Davis</td>
-                                <td>Multiple violations</td>
-                                <td>2024-06-12</td>
-                                <td>30 days</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+  // Chart.js Setup
+  const ctx = document.getElementById('analyticsChart').getContext('2d');
+  const analyticsChart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: ['Aktive', 'Gebannte'], datasets: [{ label: 'Server-Statistik', data: [0,0], backgroundColor: ['#2a9d8f','#e63946'] }] },
+    options: { responsive: true }
+  });
 
-                <!-- Logs Tab -->
-                <div id="logs" class="tab-panel">
-                    <h3>System Logs</h3>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Timestamp</th>
-                                <th>Level</th>
-                                <th>Event</th>
-                                <th>User</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>2024-06-12 14:30:25</td>
-                                <td><span class="status-badge status-online">Info</span></td>
-                                <td>User login</td>
-                                <td>alice@example.com</td>
-                            </tr>
-                            <tr>
-                                <td>2024-06-12 14:28:15</td>
-                                <td><span class="status-badge status-pending">Warning</span></td>
-                                <td>Failed login attempt</td>
-                                <td>unknown</td>
-                            </tr>
-                            <tr>
-                                <td>2024-06-12 14:25:05</td>
-                                <td><span class="status-badge status-offline">Error</span></td>
-                                <td>Database connection failed</td>
-                                <td>system</td>
-                            </tr>
-                            <tr>
-                                <td>2024-06-12 14:20:30</td>
-                                <td><span class="status-badge status-online">Info</span></td>
-                                <td>User registered</td>
-                                <td>newuser@example.com</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+  // Daten holen & aktualisieren
+  async function loadData(){
+    const res = await fetch('/.netlify/functions/discord-data');
+    const { activeUsers, bannedUsers, logs } = await res.json();
 
-                <!-- Analytics Tab -->
-                <div id="analytics" class="tab-panel">
-                    <h3>Analytics Overview</h3>
-                    <div class="chart-container">
-                        <div class="chart-placeholder">
-                            <div>📈</div>
-                            <h4>Interactive Charts</h4>
-                            <p>Real-time analytics and performance metrics would be displayed here</p>
-                        </div>
-                    </div>
-                    <div>
-                        <div>
-                            <div>85%</div>
-                            <div>User Satisfaction</div>
-                        </div>
-                        <div>
-                            <div>42s</div>
-                            <div>Avg Response Time</div>
-                        </div>
-                        <div>
-                            <div>1.2M</div>
-                            <div>Page Views</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+    document.getElementById('activeUsers').textContent = activeUsers;
+    document.getElementById('bannedUsers').textContent = bannedUsers.length;
+    document.getElementById('logCount').textContent = logs.length;
 
-    <script>
-        // Theme Toggle
-        function toggleTheme() {
-            const body = document.body;
-            const currentTheme = body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            body.setAttribute('data-theme', newTheme);
-            
-            // Save preference
-            localStorage.setItem('theme', newTheme);
-        }
+    const userList = document.getElementById('userList');
+    userList.innerHTML = logs.map(l => `<li>${l.timestamp}: ${l.event}</li>`).join('');
 
-        // Load saved theme
-        function loadTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.body.setAttribute('data-theme', savedTheme);
-        }
+    document.getElementById('bannedList').innerHTML =
+      bannedUsers.map(b => `<li>${b.tag}</li>`).join('');
 
-        // Tab Switching
-        function switchTab(event, tabName) {
-            const tabs = document.querySelectorAll('.tab');
-            const panels = document.querySelectorAll('.tab-panel');
-            
-            tabs.forEach(tab => tab.classList.remove('active'));
-            panels.forEach(panel => panel.classList.remove('active'));
-            
-            event.target.classList.add('active');
-            document.getElementById(tabName).classList.add('active');
-        }
+    document.getElementById('logsList').innerHTML =
+      logs.map(l => `<li>${l.timestamp} — ${l.event}</li>`).join('');
 
-        // Animate status cards on load
-        function animateCards() {
-            const cards = document.querySelectorAll('.status-card');
-            cards.forEach((card, index) => {
-                setTimeout(() => {
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(20px)';
-                    card.style.transition = 'all 0.5s ease';
-                    
-                    setTimeout(() => {
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
-                    }, 100);
-                }, index * 100);
-            });
-        }
+    analyticsChart.data.datasets[0].data = [activeUsers, bannedUsers.length];
+    analyticsChart.update();
+  }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            loadTheme();
-            animateCards();
-
-            const onlineBadges = document.querySelectorAll('.status-online');
-            onlineBadges.forEach(badge => {
-                badge.classList.add('pulse');
-            });
-        });
-
-        // Simulated real-time updates
-        function updateStats() {
-            const updateElement = (id, minChange, maxChange) => {
-                const el = document.getElementById(id);
-                if (!el) return;
-
-                let value = parseInt(el.textContent.replace(/,/g, ''));
-                value += Math.floor(Math.random() * (maxChange - minChange + 1)) + minChange;
-                value = Math.max(0, value);
-
-                el.textContent = new Intl.NumberFormat().format(value);
-            };
-
-            updateElement("active-users", -5, 10);
-            updateElement("banned-users", -1, 2);
-            updateElement("logs-today", 50, 200);
-        }
-
-        setInterval(updateStats, 10000);
-
-    </script>
+  setInterval(loadData, 5000);
+  loadData();
+  </script>
 </body>
 </html>
