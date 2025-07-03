@@ -1,121 +1,152 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vanith Dashboard</title>
-  <!-- UIverse: Beispiel Card & Button Styles -->
-  <link rel="stylesheet" href="https://unpkg.com/uiverse-css@latest">
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanith - Premium Software Solutions</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body data-theme="light">
-  <div class="uiverse-container container">
-    <header class="header">
-      <div class="logo">
-        <div class="logo-icon">V</div><h1>Vanith</h1>
-      </div>
-      <div class="header-controls">
-        <button id="themeToggleBtn" class="uiverse-btn">🌞</button>
-        <div class="user-menu">F</div>
-      </div>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">Vanith</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#software">Software</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#contact">Kontact</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <!-- Status Cards -->
-    <section class="status-overview">
-      <div class="status-card uiverse-card">
-        <div class="status-header"><span>Aktive Nutzer</span></div>
-        <div class="status-value" id="activeUsers">–</div>
-      </div>
-      <div class="status-card uiverse-card">
-        <div class="status-header"><span>Gebannte Nutzer</span></div>
-        <div class="status-value" id="bannedUsers">–</div>
-      </div>
-      <div class="status-card uiverse-card">
-        <div class="status-header"><span>Logs (letzte Minute)</span></div>
-        <div class="status-value" id="logCount">–</div>
-      </div>
-    </section>
+    <main>
+        <section class="hero" id="home">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Premium Software Solutions</h1>
+                    <p>Innovative tools for modern developers and professionals</p>
+                    <a href="#software" class="cta-button">Discover our software</a>
+                </div>
+            </div>
+        </section>
 
-    <!-- Tabs -->
-    <section class="tabs-container uiverse-card">
-      <div class="tabs-header">
-        <button class="tab active" onclick="switchTab('users')">Users</button>
-        <button class="tab" onclick="switchTab('banned')">Banned</button>
-        <button class="tab" onclick="switchTab('logs')">Logs</button>
-        <button class="tab" onclick="switchTab('analytics')">Analytics</button>
-      </div>
+        <section class="software-section" id="software">
+            <div class="container">
+                <h2 class="section-title">Our Software</h2>
+                <div class="software-grid">
 
-      <div class="tab-content">
-        <div id="users" class="tab-panel active">
-          <h3>Active Users</h3>
-          <ul id="userList"></ul>
+                    <div class="software-card fade-in">
+                        <div class="software-icon">🔧</div>
+                        <h3>Vanith</h3>
+                        <p>Become more fun and a good experience with Vanith</p>
+                        <button class="download-btn" onclick="downloadSoftware('Vanith')">Download v1.8.5</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="container">
+                <h2 class="section-title">Why Vanith?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Thunderfast</h3>
+                        <p>Optimized for max Performance</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Secure</h3>
+                        <p>Modern security standards and encrypted data</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💡</div>
+                        <h3>Innovation</h3>
+                        <p>Cutting-edge Technologies</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Kontakt</h3>
+                    <a href="mailto:info@xenosoft.de">info@xenosoft.de</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <a href="#support">Data protection</a>
+                    <a href="#faq">FAQ</a>
+                    <a href="#updates">Updates</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Rechtliches</h3>
+                    <a href="#privacy">Data protection</a>
+                    <a href="#terms">AGB</a>
+                    <a href="#imprint">Impressum</a>
+                </div>
+            </div>
+            <p>&copy; 2025 Vanith. All rights reserved.</p>
         </div>
-        <div id="banned" class="tab-panel">
-          <h3>Banned Users</h3>
-          <ul id="bannedList"></ul>
-        </div>
-        <div id="logs" class="tab-panel">
-          <h3>Recent Logs</h3>
-          <ul id="logsList"></ul>
-        </div>
-        <div id="analytics" class="tab-panel">
-          <h3>Ban-Rate Analyse</h3>
-          <canvas id="analyticsChart"></canvas>
-        </div>
-      </div>
-    </section>
-  </div>
+    </footer>
 
-  <script>
-  // Theme Toggle
-  const themeBtn = document.getElementById('themeToggleBtn');
-  themeBtn.onclick = () => {
-    const body = document.body;
-    const newTheme = body.dataset.theme === 'light' ? 'dark' : 'light';
-    body.dataset.theme = newTheme;
-    localStorage.setItem('theme', newTheme);
-  };
-  document.body.dataset.theme = localStorage.getItem('theme') || 'light';
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
 
-  // Tab Wechsel
-  function switchTab(tabId){
-    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.textContent.toLowerCase()===tabId));
-    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active', p.id===tabId));
-  }
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(0, 0, 0, 0.8)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.1)';
+            }
+        });
 
-  // Chart.js Setup
-  const ctx = document.getElementById('analyticsChart').getContext('2d');
-  const analyticsChart = new Chart(ctx, {
-    type: 'bar',
-    data: { labels: ['Aktive', 'Gebannte'], datasets: [{ label: 'Server-Statistik', data: [0,0], backgroundColor: ['#2a9d8f','#e63946'] }] },
-    options: { responsive: true }
-  });
+        function downloadSoftware(softwareName) {
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Gets Downloaded...';
+            button.disabled = true;
+            button.style.background = 'linear-gradient(45deg, #ffd93d, #ff6b6b)';
+            setTimeout(() => {
+                button.textContent = '🎉Download successfull🎉';
+                button.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
+                alert(`${softwareName} gets downloaded`);
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                    button.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
+                }, 2000);
+            }, 2000);
+        }
 
-  // Daten holen & aktualisieren
-  async function loadData(){
-    const res = await fetch('/.netlify/functions/discord-data');
-    const { activeUsers, bannedUsers, logs } = await res.json();
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        });
 
-    document.getElementById('activeUsers').textContent = activeUsers;
-    document.getElementById('bannedUsers').textContent = bannedUsers.length;
-    document.getElementById('logCount').textContent = logs.length;
+        document.querySelectorAll('.software-card, .feature-card').forEach(card => {
+            observer.observe(card);
+        });
 
-    const userList = document.getElementById('userList');
-    userList.innerHTML = logs.map(l => `<li>${l.timestamp}: ${l.event}</li>`).join('');
-
-    document.getElementById('bannedList').innerHTML =
-      bannedUsers.map(b => `<li>${b.tag}</li>`).join('');
-
-    document.getElementById('logsList').innerHTML =
-      logs.map(l => `<li>${l.timestamp} — ${l.event}</li>`).join('');
-
-    analyticsChart.data.datasets[0].data = [activeUsers, bannedUsers.length];
-    analyticsChart.update();
-  }
-
-  setInterval(loadData, 5000);
-  loadData();
-  </script>
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+    </script>
 </body>
 </html>
